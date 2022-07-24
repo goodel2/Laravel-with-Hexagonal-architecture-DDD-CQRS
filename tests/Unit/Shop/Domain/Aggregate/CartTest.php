@@ -13,7 +13,7 @@ use Src\Shop\Domain\ValueObject\CartId;
 use Src\Shop\Domain\ValueObject\MinUnitsForDiscount;
 use Src\Shop\Domain\ValueObject\ProductPrice;
 use Src\Shop\Domain\ValueObject\UnitProductPrice;
-use Src\Shop\Infrastructure\InMemoryProductRepository;
+use Src\Shop\Infrastructure\Repositories\InMemoryProductRepository;
 use Tests\Unit\Shop\Domain\DataBuilders\CartItemsCollectionBuild;
 
 /**

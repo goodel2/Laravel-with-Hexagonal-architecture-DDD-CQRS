@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Shop\Domain\ValueObject;
 
 use PHPUnit\Framework\TestCase;
+use Src\Shared\Domain\Exceptions\InvalidInputDomainException;
 use Src\Shop\Domain\ValueObject\Currency;
 
 /**
@@ -33,5 +34,11 @@ class CurrencyTest extends TestCase
     {
         $defaultCurrency = Currency::getDefaultValue();
         $this->assertEquals('EUR', $defaultCurrency);
+    }
+
+    public function testNotFoundCurrencyDomainValueObject()
+    {
+        $this->expectException(InvalidInputDomainException::class);
+        new Currency('INVENT');
     }
 }

@@ -26,5 +26,6 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="WS_ECB_FOREIGN_EXCHANGE" value="https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"/>
     </php>
 </phpunit>

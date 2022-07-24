@@ -212,4 +212,12 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Web Services
+    |--------------------------------------------------------------------------
+    */
+
+    'ws_ecb_foreign_exchange' => env('WS_ECB_FOREIGN_EXCHANGE')
+
 ];

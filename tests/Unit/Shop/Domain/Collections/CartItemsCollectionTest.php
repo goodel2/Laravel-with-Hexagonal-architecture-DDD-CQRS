@@ -20,7 +20,7 @@ class CartItemsCollectionTest extends TestCase
 {
     public function testAddCartItemsCollectionDomainCollection()
     {
-        $cartItemsCollection = CartItemsCollectionBuild::start();
+        $cartItemsCollection = CartItemsCollectionBuild::start(10);
         $cartItem = new CartItem(
             new ProductId(Uuid::random()->getValue()),
             new QuantityCartItem(rand(1, 2))
@@ -45,7 +45,7 @@ class CartItemsCollectionTest extends TestCase
 
     public function testRemoveCartItemsCollectionDomainCollection()
     {
-        $cartItemsCollection = CartItemsCollectionBuild::start();
+        $cartItemsCollection = CartItemsCollectionBuild::start(5);
         $cartItem = last($cartItemsCollection->getItems());
         $newCartItem = new CartItem(
             new ProductId(Uuid::random()->getValue()),
@@ -53,24 +53,17 @@ class CartItemsCollectionTest extends TestCase
         );
 
         $this->assertTrue($cartItemsCollection->removeItem($cartItem));
-
         $this->expectException(CartItemNotExistsToRemoveItemDomainException::class);
         $cartItemsCollection->removeItem($newCartItem);
     }
 
-    public function testConstructorMaxDifferentProductsInCartItemsCollectionDomainCollection()
+    public function testBuildingManyCartItemsCollectionDomainCollection()
     {
-        $this->expectException(MaxDifferentProductsInCartDomainException::class);
-        CartItemsCollectionBuild::start(11);
-    }
-
-    public function testAddItemMaxDifferentProductsInCartItemsCollectionDomainCollection()
-    {
-        $this->expectException(MaxDifferentProductsInCartDomainException::class);
-        $cartItemsCollection = CartItemsCollectionBuild::start(9);
-        $cartItemsCollectionSecond = CartItemsCollectionBuild::start(2);
+        $cartItemsCollection = CartItemsCollectionBuild::start(100);
+        $cartItemsCollectionSecond = CartItemsCollectionBuild::start(20);
         foreach ($cartItemsCollectionSecond->getItems() as $item) {
             $cartItemsCollection->addItem($item);
         }
+        $this->assertEquals(120, $cartItemsCollection->getTotalNumberItems());
     }
 }

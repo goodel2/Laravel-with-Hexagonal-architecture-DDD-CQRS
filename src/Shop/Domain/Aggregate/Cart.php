@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Src\Shop\Domain\Aggregate;
 
-use phpDocumentor\Reflection\DocBlock\Tags\Throws;
 use Src\Shared\Domain\Aggregate\AggregateRoot;
 use Src\Shared\Infrastructure\Exceptions\EntityNotFoundInfrastructureException;
 use Src\Shop\Domain\Collections\CartItemsCollection;
 use Src\Shop\Domain\Contracts\IProductRepository;
+use Src\Shop\Domain\Exceptions\MaxDifferentProductsInCartDomainException;
+use Src\Shop\Domain\Exceptions\MaxUnitPerProductDomainException;
 use Src\Shop\Domain\ValueObject\Amount;
 use Src\Shop\Domain\ValueObject\CartId;
 use Src\Shop\Domain\ValueObject\CartItem;
@@ -19,13 +20,16 @@ use Src\Shop\Domain\ValueObject\QuantityCartItem;
 
 class Cart extends AggregateRoot
 {
-    private CartId $id;
-    private CartItemsCollection $cartItems;
+    private const MAX_UNITS_PER_PRODUCT = 50;
+    private const MAX_DIFFERENT_PRODUCTS = 10;
 
-    public function __construct(CartId $id)
+    public function __construct(
+        private CartId              $id,
+        private CartItemsCollection $cartItems
+    )
     {
-        $this->id = $id;
-        $this->cartItems = new CartItemsCollection([]);
+        $this->validateMaxDifferentProducts($cartItems->getTotalNumberItems());
+        $this->validateMaxUnitsPerProductByCartItemsCollection($cartItems);
     }
 
     public function getId(): CartId
@@ -45,6 +49,9 @@ class Cart extends AggregateRoot
 
     public function addCartItem(CartItem $cartItem, IProductRepository $productRepository): void
     {
+        $this->validateMaxDifferentProducts($this->cartItems->getTotalNumberItems() + 1);
+        $this->validateMaxUnitsPerProductByCartItem($cartItem);
+
         $productRepository->findOrFail($cartItem->getProductId());
         $cartItemFound = $this->getCartItemByProductId($cartItem->getProductId());
         if ($cartItemFound) {
@@ -64,7 +71,9 @@ class Cart extends AggregateRoot
     {
         $cartItem = $this->getCartItemByProductId($productId);
         if (is_null($cartItem)) {
-            $this->throwEntityNotFound($productId->getValue());
+            throw new EntityNotFoundInfrastructureException(
+                sprintf("Cart item not found with product id: %s", $productId->getValue())
+            );
         } else {
             $this->getCartItemsCollection()->removeItem($cartItem);
         }
@@ -85,7 +94,17 @@ class Cart extends AggregateRoot
         );
     }
 
-    private function getCartItemByProductId(ProductId $productId): CartItem|null
+    public static function getMaxDifferentProducts(): mixed
+    {
+        return self::MAX_DIFFERENT_PRODUCTS;
+    }
+
+    public static function getMaxUnitsPerProduct(): mixed
+    {
+        return self::MAX_UNITS_PER_PRODUCT;
+    }
+
+    private function getCartItemByProductId(ProductId $productId): ?CartItem
     {
         $cartItems = $this->getCartItems();
         foreach ($cartItems as $cartItem) {
@@ -96,10 +115,33 @@ class Cart extends AggregateRoot
         return null;
     }
 
-    private function throwEntityNotFound(string $productId): Throws
+    private function validateMaxUnitsPerProductByCartItemsCollection(CartItemsCollection $cartItems): void
     {
-        throw new EntityNotFoundInfrastructureException(
-            sprintf("Cart item not found with product id: %s", $productId)
-        );
+        $cartItemsArray = $cartItems->getItems();
+        foreach ($cartItemsArray as $cartItem) {
+            $this->validateMaxUnitsPerProductByCartItem($cartItem);
+        }
+    }
+
+    private function validateMaxUnitsPerProductByCartItem(CartItem $cartItem): void
+    {
+        $maxUnitsPerProduct = self::getMaxUnitsPerProduct();
+        $cartItemsLeft = $maxUnitsPerProduct - $cartItem->getQuantityCartItem()->getValue();
+        if ($cartItemsLeft < 0) {
+            throw new MaxUnitPerProductDomainException(
+                sprintf('You have got the maximum number of items in cart: %s', $maxUnitsPerProduct)
+            );
+        }
+    }
+
+    private function validateMaxDifferentProducts(int $totalItems): void
+    {
+        $maxDifferentProducts = self::getMaxDifferentProducts();
+        $differentProductsLeft = $maxDifferentProducts - $totalItems;
+        if ($differentProductsLeft < 0) {
+            throw new MaxDifferentProductsInCartDomainException(
+                sprintf('You have got the maximum different products in cart: %s', $maxDifferentProducts)
+            );
+        }
     }
 }

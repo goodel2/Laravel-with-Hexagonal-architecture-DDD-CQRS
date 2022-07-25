@@ -4,24 +4,16 @@ declare(strict_types=1);
 
 namespace Src\Shop\Domain\Collections;
 
-use phpDocumentor\Reflection\DocBlock\Tags\Throws;
 use Src\Shared\Domain\Collections\Collection;
 use Src\Shop\Domain\Exceptions\CartItemNotExistsToRemoveItemDomainException;
-use Src\Shop\Domain\Exceptions\MaxDifferentProductsInCartDomainException;
 use Src\Shop\Domain\ValueObject\CartItem;
 
 class CartItemsCollection extends Collection
 {
-    private array $items;
-
-    private const MAX_DIFFERENT_PRODUCTS = 10;
-
     public function __construct(
-        array $items
+        private array $items
     ) {
         parent::__construct($items);
-        $this->validateMaxDifferentProducts(count($items));
-        $this->items = $items;
     }
 
     public function getType(): string
@@ -32,6 +24,11 @@ class CartItemsCollection extends Collection
     public function getItems(): array
     {
         return $this->items;
+    }
+
+    public function getTotalNumberItems(): int
+    {
+        return count($this->items);
     }
 
     public function findItem(CartItem $newItem): CartItem|null
@@ -48,7 +45,6 @@ class CartItemsCollection extends Collection
 
     public function addItem(CartItem $newItem): bool
     {
-        $this->validateMaxDifferentProducts(count($this->getItems()) + 1);
         $cartItemFound = $this->findItem($newItem);
         if (is_null($cartItemFound)) {
             $this->items[] = $newItem;
@@ -66,36 +62,8 @@ class CartItemsCollection extends Collection
                 return true;
             }
         }
-        $this->throwCartItemNotExistsToRemoveItemDomainException();
-        return false;
-    }
-
-    public static function getMaxDifferentProducts(): mixed
-    {
-        return self::MAX_DIFFERENT_PRODUCTS;
-    }
-
-    private function validateMaxDifferentProducts(int $totalItems): void
-    {
-        $maxDifferentProducts = self::getMaxDifferentProducts();
-        $differentProductsLeft = $maxDifferentProducts - $totalItems;
-        if ($differentProductsLeft < 0) {
-            $this->throwDifferentProductsLeft($maxDifferentProducts);
-        }
-    }
-
-    private function throwDifferentProductsLeft(int $maxDifferentProducts): Throws
-    {
-        throw new MaxDifferentProductsInCartDomainException(
-            sprintf('You have got the maximum different products in cart: %s', $maxDifferentProducts)
-        );
-    }
-
-    private function throwCartItemNotExistsToRemoveItemDomainException(): Throws
-    {
         throw new CartItemNotExistsToRemoveItemDomainException(
             sprintf('You cannot remove a cart item than does not exists.')
         );
     }
-
 }

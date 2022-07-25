@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Shop\Infrastructure\Repositories;
+namespace Src\Shop\Infrastructure\Repositories\Product;
 
 use App\Models\Product as EloquentProductModel;
 use Src\Shared\Domain\Utils;
@@ -46,5 +46,11 @@ final class EloquentProductRepository implements IProductRepository
         ];
 
         $newProduct->create($data);
+    }
+
+    public function delete(ProductId $productId): void
+    {
+        $productToDelete = $this->eloquentProductModel->findOrFail($productId);
+        $productToDelete->delete();
     }
 }

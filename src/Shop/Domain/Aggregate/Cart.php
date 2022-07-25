@@ -20,21 +20,21 @@ use Src\Shop\Domain\ValueObject\QuantityCartItem;
 
 class Cart extends AggregateRoot
 {
+    private CartId $cartId;
+    private cartItemsCollection $cartItems;
+
     private const MAX_UNITS_PER_PRODUCT = 50;
     private const MAX_DIFFERENT_PRODUCTS = 10;
 
-    public function __construct(
-        private CartId              $id,
-        private CartItemsCollection $cartItems
-    )
+    public function __construct(CartId $cartId)
     {
-        $this->validateMaxDifferentProducts($cartItems->getTotalNumberItems());
-        $this->validateMaxUnitsPerProductByCartItemsCollection($cartItems);
+        $this->cartId = $cartId;
+        $this->cartItems = new CartItemsCollection([]);
     }
 
     public function getId(): CartId
     {
-        return $this->id;
+        return $this->cartId;
     }
 
     public function getCartItems(): array
@@ -79,14 +79,17 @@ class Cart extends AggregateRoot
         }
     }
 
-    public function getTotalPriceInCart(IProductRepository $productRepository): Price
+    public function getTotalPriceInCart(IProductRepository $productRepository, bool $priceWithDiscount = true): Price
     {
         $totalPrice = 0;
         $cartItems = $this->getCartItems();
         foreach ($cartItems as $cartItem) {
             $product = $productRepository->findOrFail($cartItem->getProductId());
-            $totalPrice += $product->getProductPrice()->getPrice()->getValue()
-                * $cartItem->getQuantityCartItem()->getValue();
+            $productPrice = $priceWithDiscount ?
+                $product->getProductPrice()->getPriceWithDiscount()->getValue() :
+                $product->getProductPrice()->getPriceWithNoDiscount()->getValue();
+            $quantityCartItems = $cartItem->getQuantityCartItem()->getValue();
+            $totalPrice += $productPrice * $quantityCartItems;
         }
         return new Price(
             new Currency(Currency::getDefaultValue()),
@@ -113,14 +116,6 @@ class Cart extends AggregateRoot
             }
         }
         return null;
-    }
-
-    private function validateMaxUnitsPerProductByCartItemsCollection(CartItemsCollection $cartItems): void
-    {
-        $cartItemsArray = $cartItems->getItems();
-        foreach ($cartItemsArray as $cartItem) {
-            $this->validateMaxUnitsPerProductByCartItem($cartItem);
-        }
     }
 
     private function validateMaxUnitsPerProductByCartItem(CartItem $cartItem): void

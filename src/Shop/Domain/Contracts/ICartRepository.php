@@ -9,7 +9,9 @@ use Src\Shop\Domain\ValueObject\CartId;
 
 interface ICartRepository
 {
-    public function findOrFail(CartId $id): Cart;
+    public function findOrFail(CartId $cartId): Cart;
 
     public function save(Cart $cart): void;
+
+    public function delete(CartId $cartId): void;
 }

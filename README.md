@@ -1,23 +1,40 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+## Technical test for Bodeboca
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A shopping cart built on Laravel 9 that implements DDD + Hexagonal Architectue + CQRS.
 
-## About Laravel
+This shopping cart allow us to add and remove products, and to calculate 
+the total amount of the shopping cart both in euros and in other currencies.
 
-Laravel is a `web application` framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+There are some restrictions on the shopping cart:
+
+- A maximum of `10 different products` can be added.
+- A maximum of `50 units per product` can be added.
+- The products have a normal price and a discounted price, 
+depending on a minimum number of units that each product must 
+have for the `discounted price` to be applied.
+- The cart has to be able to show the `total amount` with and 
+without discount.
+- The cart must show the total amount in euros and 
+in another `currency`, if necessary.
+
+### How to configure this project
+
+First of all, you have to copy the `.env.example`file, located on the project 
+root path, to a new one called `.env`
+
+Then you can to run this command to install all dependencies:
 
 ```
 composer install
 ```
 
+To start the project in a virtual machine using docker, you need to run (Docker Desktop is required):
+
 ```
 ./vendor/bin/sail up
 ```
+
+You can run the tests with the following commands:
 
 ```
 ./vendor/bin/phpunit --group=Domain
@@ -27,9 +44,13 @@ composer install
 ./vendor/bin/phpunit --group=Infrastructure
 ```
 
+You can check the errors found by `psalm` using this command:
+
 ```
-./vendor/bin/psalm --show-info=true
+./vendor/bin/psalm
 ```
+
+And the command rector php to check refactorizations:
 
 ```
 ./vendor/bin/rector process src --dry-run

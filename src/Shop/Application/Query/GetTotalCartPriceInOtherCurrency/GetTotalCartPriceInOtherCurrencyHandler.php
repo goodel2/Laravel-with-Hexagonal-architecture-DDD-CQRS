@@ -25,17 +25,21 @@ class GetTotalCartPriceInOtherCurrencyHandler implements IApplicationQueryHandle
     {
         $currency = new Currency($totalCartPrice->getCurrency());
         $cart = $this->cartRepository->findOrFail(new CartId($totalCartPrice->getCartId()));
+
         if ($totalCartPrice->getCurrency() !== Currency::getDefaultValue()) {
+
             $priceWithDiscount = $this->foreignExchange->convertOrFail(new Price(
                     new Currency($totalCartPrice->getCurrency()),
                     new Amount($cart->getTotalPriceInCart($this->productRepository, true)->getValue())
                 )
             )->getValue();
+
             $priceWithNoDiscount = $this->foreignExchange->convertOrFail(new Price(
                     new Currency($totalCartPrice->getCurrency()),
                     new Amount($cart->getTotalPriceInCart($this->productRepository, false)->getValue())
                 )
             )->getValue();
+
         } else {
             $priceWithDiscount = $cart->getTotalPriceInCart($this->productRepository, true)->getValue();
             $priceWithNoDiscount = $cart->getTotalPriceInCart($this->productRepository, false)->getValue();

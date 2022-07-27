@@ -19,7 +19,7 @@ in another `currency`, if necessary.
 
 ### How to configure this project
 
-First of all, you have to copy the `.env.example`file, located on the project 
+First of all, you have to copy the `.env.example` file, located on the project 
 root path, to a new one called `.env`
 
 Then you can to run this command to install all dependencies:

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Shop\Domain\Collections;
+namespace Tests\Feature\Shop\Domain\Collections;
 
 use PHPUnit\Framework\TestCase;
 use Src\Shared\Domain\ValueObject\Uuid;
@@ -11,7 +11,7 @@ use Src\Shop\Domain\Exceptions\MaxDifferentProductsInCartDomainException;
 use Src\Shop\Domain\ValueObject\CartItem;
 use Src\Shop\Domain\ValueObject\ProductId;
 use Src\Shop\Domain\ValueObject\QuantityCartItem;
-use Tests\Unit\Shop\Domain\DataBuilders\CartItemsCollectionBuild;
+use Tests\Feature\Shop\Domain\DataBuilders\CartItemsCollectionBuild;
 
 /**
  * @group Domain

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Shop\Domain\Aggregate;
+namespace Tests\Feature\Shop\Domain\Aggregate;
 
 use PHPUnit\Framework\TestCase;
 use Src\Shared\Domain\Utils;
@@ -18,7 +18,7 @@ use Src\Shop\Domain\ValueObject\MinUnitsForDiscount;
 use Src\Shop\Domain\ValueObject\ProductPrice;
 use Src\Shop\Domain\ValueObject\UnitProductPrice;
 use Src\Shop\Infrastructure\Repositories\Product\InMemoryProductRepository;
-use Tests\Unit\Shop\Domain\DataBuilders\CartItemsCollectionBuild;
+use Tests\Feature\Shop\Domain\DataBuilders\CartItemsCollectionBuild;
 
 /**
  * @group Domain

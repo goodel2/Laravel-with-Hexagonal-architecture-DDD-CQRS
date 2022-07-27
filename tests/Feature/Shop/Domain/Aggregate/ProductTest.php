@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Shop\Domain\Aggregate;
+namespace Tests\Feature\Shop\Domain\Aggregate;
 
 use PHPUnit\Framework\TestCase;
 use Src\Shared\Domain\ValueObject\Uuid;

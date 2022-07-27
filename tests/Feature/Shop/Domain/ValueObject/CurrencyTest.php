@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Shop\Domain\ValueObject;
+namespace Tests\Feature\Shop\Domain\ValueObject;
 
 use PHPUnit\Framework\TestCase;
 use Src\Shared\Domain\Exceptions\InvalidInputDomainException;

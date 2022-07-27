@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Shared\Infrastructure\WebSevices;
+namespace Tests\Unit\Shared\Infrastructure\WebSevices;
 
 use PHPUnit\Framework\TestCase;
 use Src\Shared\Infrastructure\WebServices\EuropeCentralBankForeignExchange;

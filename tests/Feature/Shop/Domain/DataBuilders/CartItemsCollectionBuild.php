@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Shop\Domain\DataBuilders;
+namespace Tests\Feature\Shop\Domain\DataBuilders;
 
 use Src\Shared\Domain\ValueObject\Uuid;
 use Src\Shop\Domain\Collections\CartItemsCollection;

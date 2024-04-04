@@ -1,4 +1,4 @@
-## Technical test for Bodeboca
+## Technical test
 
 A shopping cart built on Laravel 9 that implements DDD + Hexagonal Architectue + CQRS.
 
